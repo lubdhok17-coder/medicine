@@ -32,10 +32,18 @@ jobs:
         rm -rf android ios windows macos linux
         flutter create . --platforms=android --project-name=shasthya_reminder_app --org com.shasthya.reminder
 
-    - name: Fix Kotlin Version to 1.9.20
+    - name: Force Modern Kotlin & Gradle Version for Widgets
       run: |
-        sed -i "s/ext.kotlin_version = .*/ext.kotlin_version = '1.9.20'/g" android/build.gradle || true
-        sed -i 's/ext.kotlin_version = .*/ext.kotlin_version = "1.9.20"/g' android/build.gradle || true
+        # Update build.gradle with modern Kotlin version
+        sed -i "s/ext.kotlin_version = .*/ext.kotlin_version = '1.9.24'/g" android/build.gradle || true
+        sed -i 's/ext.kotlin_version = .*/ext.kotlin_version = "1.9.24"/g' android/build.gradle || true
+        
+        # Ensure gradle wrapper uses a compatible version
+        echo "distributionBase=GRADLE_USER_HOME" > android/gradle/wrapper/gradle-wrapper.properties
+        echo "distributionPath=wrapper/dists" >> android/gradle/wrapper/gradle-wrapper.properties
+        echo "distributionUrl=https\://services.gradle.org/distributions/gradle-8.4-bin.zip" >> android/gradle/wrapper/gradle-wrapper.properties
+        echo "zipStoreBase=GRADLE_USER_HOME" > android/gradle/wrapper/gradle-wrapper.properties
+        echo "zipStorePath=wrapper/dists" >> android/gradle/wrapper/gradle-wrapper.properties
 
     - name: Build Release APK
       run: flutter build apk --release
