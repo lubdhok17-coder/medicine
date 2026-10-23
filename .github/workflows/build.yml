@@ -32,18 +32,19 @@ jobs:
         rm -rf android ios windows macos linux
         flutter create . --platforms=android --project-name=shasthya_reminder_app --org com.shasthya.reminder
 
-    - name: Force Modern Kotlin & Gradle Version for Widgets
+    - name: Configure Kotlin and Gradle for Widgets
       run: |
-        # Update build.gradle with modern Kotlin version
+        # 1. Update Kotlin Version in android/build.gradle
         sed -i "s/ext.kotlin_version = .*/ext.kotlin_version = '1.9.24'/g" android/build.gradle || true
         sed -i 's/ext.kotlin_version = .*/ext.kotlin_version = "1.9.24"/g' android/build.gradle || true
-        
-        # Ensure gradle wrapper uses a compatible version
-        echo "distributionBase=GRADLE_USER_HOME" > android/gradle/wrapper/gradle-wrapper.properties
-        echo "distributionPath=wrapper/dists" >> android/gradle/wrapper/gradle-wrapper.properties
-        echo "distributionUrl=https\://services.gradle.org/distributions/gradle-8.4-bin.zip" >> android/gradle/wrapper/gradle-wrapper.properties
-        echo "zipStoreBase=GRADLE_USER_HOME" > android/gradle/wrapper/gradle-wrapper.properties
-        echo "zipStorePath=wrapper/dists" >> android/gradle/wrapper/gradle-wrapper.properties
+
+        # 2. Fix Gradle Wrapper properties cleanly
+        PROPERTIES_FILE="android/gradle/wrapper/gradle-wrapper.properties"
+        echo "distributionBase=GRADLE_USER_HOME" > "$PROPERTIES_FILE"
+        echo "distributionPath=wrapper/dists" >> "$PROPERTIES_FILE"
+        echo "distributionUrl=https\://services.gradle.org/distributions/gradle-8.4-bin.zip" >> "$PROPERTIES_FILE"
+        echo "zipStoreBase=GRADLE_USER_HOME" >> "$PROPERTIES_FILE"
+        echo "zipStorePath=wrapper/dists" >> "$PROPERTIES_FILE"
 
     - name: Build Release APK
       run: flutter build apk --release
